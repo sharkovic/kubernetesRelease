@@ -1,0 +1,8 @@
+- name: Copy token for join into cluster
+  copy:
+    src: token
+    dest: token.sh
+    mode: "0777"
+
+- name: Add node to cluster
+  command: bash token.sh

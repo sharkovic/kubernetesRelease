@@ -1,0 +1,97 @@
+- name: Add Ansible user
+  ansible.builtin.user:
+    name: ansible
+    shell: /bin/bash
+    groups: sudo,root
+    append: yes
+
+- name: Add ssh directory for ansible user
+  file:
+    path: /home/ansible/.ssh
+    state: directory
+    owner: ansible
+    group: ansible
+    mode: '0700'
+
+- name: Add ssh key for ansible user
+  template:
+    src: authorized_keys.j2
+    dest: /home/ansible/.ssh/authorized_keys
+    owner: ansible
+    group: ansible
+    mode: "0600"
+
+- name: Hosts file configuration
+  template:
+    src: hosts.j2
+    dest: /etc/hosts
+
+- name: Disabling SWAP
+  shell: swapoff --all
+
+- name: Disable SWAP permanently
+  replace:
+    path: /etc/fstab
+    regexp: '^([^#].*?\sswap\s+sw\s+.*)$'
+    replace: '# \1'
+
+- name: Add the overlay br_netfilter modules
+  community.general.modprobe:
+    name: "{{ item }}"
+    state: present
+  with_items: 
+    - overlay
+    - br_netfilter
+
+- name: Add any network configuration
+  ansible.posix.sysctl:
+    name: "{{ item }}"
+    value: '1'
+    sysctl_set: true
+    state: present
+    reload: true
+  with_items:
+    - net.bridge.bridge-nf-call-ip6tables
+    - net.bridge.bridge-nf-call-iptables
+    - net.ipv4.ip_forward
+
+- name: import the any apt key
+  apt_key:
+    url: "{{ item.url }}"
+    key: "{{ item.key }}"
+    state: present
+  with_items:
+    - { url: https://download.docker.com/linux/ubuntu/gpg, key: /etc/apt/trusted.gpg.d/docker.gpg }
+    - { url: https://packages.cloud.google.com/apt/doc/apt-key.gpg, key: /etc/apt/trusted.gpg.d/kubernetes-apt-key.gpg }
+
+- name: install any repositories
+  apt_repository:
+    repo: "{{ item }}"
+    state: present
+  with_items:
+    - deb [arch=amd64] https://download.docker.com/linux/ubuntu jammy stable
+    - deb http://apt.kubernetes.io/ kubernetes-xenial main
+
+- name: Install a list of packages
+  ansible.builtin.apt:
+    pkg:
+    - curl
+    - gnupg2
+    - software-properties-common
+    - apt-transport-https
+    - ca-certificates
+    - containerd.io
+
+- name: Configure container-d
+  shell: |
+    containerd config default | sudo tee /etc/containerd/config.toml >/dev/null 2>&1
+    sed -i 's/SystemdCgroup \= false/SystemdCgroup \= true/g' /etc/containerd/config.toml
+    sed -i 's/^disabled_plugins.*$/enable_plugins\=\[\"cri\"\]/g' /etc/containerd/config.toml
+
+- name: Enable and (re)start service
+  systemd:
+    name: containerd
+    daemon_reload: true
+    enabled: yes
+
+

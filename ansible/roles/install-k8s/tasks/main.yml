@@ -1,0 +1,13 @@
+- name: Prepare 
+  include_tasks: prepare.yml
+
+- name: Install
+  include_tasks: install.yml
+
+- name: Configure Controlplanes
+  include_tasks: configure-controlplane.yml
+  when: inventory_hostname in groups['controlplanes']
+
+- name: Configure Workers
+  include_tasks: configure-workers.yml
+  when: inventory_hostname in groups['workers']
