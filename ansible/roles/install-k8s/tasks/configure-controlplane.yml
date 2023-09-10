@@ -1,24 +1,11 @@
 - name: Kuber cluster init
   command: kubeadm init --control-plane-endpoint={{ ansible_fqdn }} --pod-network-cidr={{ pod_network_cidr }}
 
-- name: Create folder .kube
-  file:
-    dest: .kube
-    state: directory
-
 - name: Copy kubernetes config
-  copy:
-    src: /etc/kubernetes/admin.conf
-    dest: .kube/config
-    remote_src: yes
+  shell: mkdir -p $HOME/.kube && sudo cp /etc/kubernetes/admin.conf $HOME/.kube/config && sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
-#- name: Download calico
-#  command: curl -O -L {{ CNI }}
-
-#- name: Calico install
-#  become: false
-#  command: sudo kubectl apply -f calico.yaml --insecure-skip-tls-verify=true
-
+- name: Calico install
+  command: kubectl apply -f {{ CNI }}
 
 - name: Generate join comand 
   command: kubeadm token create --print-join-command
