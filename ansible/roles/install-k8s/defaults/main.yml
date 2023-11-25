@@ -1,3 +1,6 @@
 pod_network_cidr: 10.2.0.0/16
 CNI: https://projectcalico.docs.tigera.io/manifests/calico.yaml
 authorized_keys: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC1v2Z0gxSgEFohJcxdP89gqkYuXd5xyqwS5k5mpZGoDww5009CoAd4+n0LBGcPp/YWAmUa28a71ny+FiP4aIm1AAQamsflEGxfSHyC8rENcbWDNf42t3JB9vWCAQlMnuPugbP4CUgNJO4MGszn+QjRQqY3Bsaxi1wD6XeEWzjopK32bWvU0ra6YIegA+EajLvUdYvdzza1lm/opX+jVmPZ5HbdmaP+JBLqE2bljTkUD/rrHP9WcK8GYeWBYGgASq2K6307CNOKwJXsbjPxjeYbmMY+zIvLfUc0k2ZDO7mKg887lgxaszaST+JV9OZ0lRhDLBsIJcJERspJ5z5+MImHpuDxy9vD2DuAapHcnATERRq18bz94AcT8sv2vq8+eVS6Au1O8YbeSa6ivGLW8JDag1ABN+81nvB3plwBOYzY1xcEIEImWk3KhYGVx17FDTcy4Sdjxqi96S1Qhwu+6Z+4JRkQKB+asin5Zj7L1qts+KKs9zErkdIwc4HvSArWZ90= sharkovic@sharkovic-desktop
+
+nfs_dir: /nfs
+nfs_config: "{{ nfs_dir }} *(rw,sync,no_subtree_check,no_root_squash,no_all_squash,insecure)"

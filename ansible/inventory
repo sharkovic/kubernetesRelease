@@ -1,5 +1,12 @@
 [controlplanes]
-k8s-master01 ansible_host=192.168.3.17
+control-01 ansible_host=192.168.3.27
 [workers]
-k8s-worker01 ansible_host=192.168.3.19
-k8s-worker02 ansible_host=192.168.3.20
+worker01 ansible_host=192.168.3.25
+worker02 ansible_host=192.168.3.26
+[nfsserver]
+nfs ansible_host=192.168.3.28
+
+ #helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
+ #helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner \
+ #  --set nfs.server=192.168.3.28 \
+ #  --set nfs.path=/nfs

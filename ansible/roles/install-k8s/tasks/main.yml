@@ -1,13 +1,17 @@
-- name: Prepare 
-  include_tasks: prepare.yml
+#- name: Prepare 
+#  include_tasks: prepare.yml
 
-- name: Install
-  include_tasks: install.yml
+#- name: Install
+#  include_tasks: install.yml
 
-- name: Configure Controlplanes
-  include_tasks: configure-controlplane.yml
-  when: inventory_hostname in groups['controlplanes']
+#- name: Configure Controlplanes
+#  include_tasks: configure-controlplane.yml
+#  when: inventory_hostname in groups['controlplanes']
 
-- name: Configure Workers
-  include_tasks: configure-workers.yml
-  when: inventory_hostname in groups['workers']
+#- name: Configure Workers
+#  include_tasks: configure-workers.yml
+#  when: inventory_hostname in groups['workers']
+
+- name: Configure nfs server
+  include_tasks: configure-nfs.yml
+  when: inventory_hostname in groups['nfsserver']

@@ -15,3 +15,7 @@
 
 - name: Copy join command to local file 
   local_action: copy content="{{ token.stdout_lines[0] }}" dest="./token"
+
+- name: Install helm
+  command: curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+

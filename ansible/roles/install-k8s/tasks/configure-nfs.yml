@@ -1,0 +1,17 @@
+- name: Install a list of packages
+  ansible.builtin.apt:
+    pkg:
+      - nfs-kernel-server
+
+- name: Creates NFS directory
+  ansible.builtin.file:
+    path: "{{ nfs_dir }}"
+    state: directory
+
+- name: NFS server configuration
+  ansible.builtin.lineinfile:
+    path: /etc/exports
+    line: "{{ nfs_config }}"
+
+- name: Apply NFS config
+  command: exportfs -a
